@@ -113,6 +113,7 @@ function generateOneNumber(){
 		var randx = parseInt(Math.floor(Math.random()*4));
 		var randy = parseInt(Math.floor(Math.random()*4));
 		times++;
+<<<<<<< HEAD
 	}
 	if(times ==50){
 		for (var i = 0; i < 4; i++) {
@@ -124,6 +125,19 @@ function generateOneNumber(){
 			};
 		};
 	}
+=======
+	}
+	if(times ==50){
+		for (var i = 0; i < 4; i++) {
+			for (var i = 0; i < 4; i++) {
+				if(board[i][j] == 0){
+					randx = i;
+					randy = j;
+				}
+			};
+		};
+	}
+>>>>>>> origin/master
 
 	//随机一个数字
 	var randNumber = Math.random()<0.5?2:4;
