@@ -113,7 +113,6 @@ function generateOneNumber(){
 		var randx = parseInt(Math.floor(Math.random()*4));
 		var randy = parseInt(Math.floor(Math.random()*4));
 		times++;
-<<<<<<< HEAD
 	}
 	if(times ==50){
 		for (var i = 0; i < 4; i++) {
@@ -125,19 +124,6 @@ function generateOneNumber(){
 			};
 		};
 	}
-=======
-	}
-	if(times ==50){
-		for (var i = 0; i < 4; i++) {
-			for (var i = 0; i < 4; i++) {
-				if(board[i][j] == 0){
-					randx = i;
-					randy = j;
-				}
-			};
-		};
-	}
->>>>>>> origin/master
 
 	//随机一个数字
 	var randNumber = Math.random()<0.5?2:4;
@@ -151,24 +137,28 @@ function generateOneNumber(){
 $(document).keydown(function(event){
 	switch(event.keyCode){
 		case 37: //left
+			event.preventDefault();
 			if(moveLeft()){
 				setTimeout("generateOneNumber()",210);
 				setTimeout("isGameOver()",300);
 			}
 			break;
 		case 38: //up
+			event.preventDefault();
 			if(moveUp()){
 				setTimeout("generateOneNumber()",210);
 				setTimeout("isGameOver()",300);
 			}
 			break;
 		case 39: //right
+			event.preventDefault();
 			if(moveRight()){
 				setTimeout("generateOneNumber()",210);
 				setTimeout("isGameOver()",300);
 			}
 			break
 		case 40: //down
+			event.preventDefault();
 			if(moveDown()){
 				setTimeout("generateOneNumber()",210);
 				setTimeout("isGameOver()",300);
@@ -183,6 +173,9 @@ document.addEventListener('touchstart',function(event){
 	startx = event.touches[0].pageX;
 	starty = event.touches[0].pageY;
 });
+document.addEventListener('touchmove',function(event){
+	event.preventDefault();
+});
 
 document.addEventListener('touchend',function(event){
 	endx = event.changedTouches[0].pageX;
@@ -190,6 +183,10 @@ document.addEventListener('touchend',function(event){
 
 	var deltax = endx -startx;
 	var deltay = endy -starty;
+
+	if(Math.abs(deltax) < 0.3*documentWidth && Math.abs(deltay) < 0.3*documentWidth){
+		return;
+	}
 
 	if(Math.abs(deltax) >= Math.abs(deltay)){
 		if(deltax > 0){
