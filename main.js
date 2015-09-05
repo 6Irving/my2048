@@ -1,13 +1,38 @@
 var board = new Array();
 var score = 0;
 var hasConfliced = new Array();
+
+var startx = 0;
+var starty = 0;
+var endx = 0;
+var endy = 0;
+
 $(document).ready(function($) {
+	prepareForMobile();
 	newgame();
-
-
-
-
 });
+
+function prepareForMobile(){
+
+	if (documentWidth>500) {
+		gridContainerWidth = 500;
+		cellSideLength = 100;
+		cellspace = 20;
+	}
+
+	$("#grid-container").css({
+		"width": gridContainerWidth-2*cellspace,
+		"height": gridContainerWidth-2*cellspace,
+		"padding": cellspace,
+		"border-radius": 0.02*gridContainerWidth
+	});
+
+	$(".grid-cell").css({
+		"width": cellSideLength,
+		"height": cellSideLength,
+		"border-radius": 0.02*cellSideLength
+	});
+}
 
 function newgame(){
 	//初始化棋盘格
@@ -20,29 +45,23 @@ function newgame(){
 
 //创建4*4网格,初始化数组board,	
 function init(){
-	for (var i = 0; i < 4; i++) {
-		for (var j = 0; j < 4; j++) {
-			$("<div>",{
-				"class": "grid-cell",
-				"id": "grid-cell-"+i+"-"+j
-			}).css({
-				"top": getPosTop(i,j),
-				"left": getPosLeft(i,j)
-			}).appendTo('#grid-container');
-		}
-	}
+    for( var i = 0 ; i < 4 ; i ++ )
+        for( var j = 0 ; j < 4 ; j ++ ){
+            var gridCell = $('#grid-cell-'+i+"-"+j);
+            gridCell.css('top', getPosTop(i,j));
+            gridCell.css('left', getPosLeft(i,j));
+        }
 
-	for (var i = 0; i < 4; i++) {
-		board[i] = new Array();
-		hasConfliced[i] = new Array();
-		for (var j = 0; j < 4; j++) {
-			board[i][j] = 0;
-			hasConfliced[i][j] = false;
-		}
-	}
-
-	updateBoardView();
-	score = 0;
+    for( var i = 0 ; i < 4 ; i ++ ){
+        board[i] = new Array();
+        hasConfliced[i] = new Array();
+        for( var j = 0 ; j < 4 ; j ++ ){
+            board[i][j] = 0;
+            hasConfliced[i][j] = false;
+        }
+    }
+    updateBoardView();
+    score = 0;
 }
 
 function updateBoardView(){
@@ -56,13 +75,13 @@ function updateBoardView(){
 				theNumberCell.css({
 					"width": "0px",
 					"height": "0px",
-					"top": getPosTop(i,j)+50,
-					"left": getPosLeft(i,j)+50
+					"top": getPosTop(i,j)+cellSideLength*0.5,
+					"left": getPosLeft(i,j)+cellSideLength*0.5
 				});
 			}else{
 				theNumberCell.css({
-					"width": "100px",
-					"height": "100px",
+					"width": cellSideLength,
+					"height": cellSideLength,
 					"top": getPosTop(i,j),
 					"left": getPosLeft(i,j),
 					"background-color": getNumberBackgroundColor(board[i][j]),
@@ -72,6 +91,9 @@ function updateBoardView(){
 			}
 			hasConfliced[i][j] = false;
 		}
+		$(".number-cell").css("line-height",cellSideLength+"px");
+		$(".number-cell").css("font-size",0.6*cellSideLength+"px");
+
 	}
 }
 
@@ -83,14 +105,26 @@ function generateOneNumber(){
 	//随机一个位置
 	var randx = parseInt(Math.floor(Math.random()*4));
 	var randy = parseInt(Math.floor(Math.random()*4));
-	while(true){
+	var times = 0;
+	while(times<50){
 		if(board[randx][randy] == 0){
 			break;
 		}
 		var randx = parseInt(Math.floor(Math.random()*4));
 		var randy = parseInt(Math.floor(Math.random()*4));
-
+		times++;
 	}
+	if(times ==50){
+		for (var i = 0; i < 4; i++) {
+			for (var i = 0; i < 4; i++) {
+				if(board[i][j] == 0){
+					randx = i;
+					randy = j;
+				}
+			};
+		};
+	}
+
 	//随机一个数字
 	var randNumber = Math.random()<0.5?2:4;
 	//随机位置显示随机数字
@@ -130,6 +164,49 @@ $(document).keydown(function(event){
 			break;
 	}
 })
+
+document.addEventListener('touchstart',function(event){
+	startx = event.touches[0].pageX;
+	starty = event.touches[0].pageY;
+});
+
+document.addEventListener('touchend',function(event){
+	endx = event.changedTouches[0].pageX;
+	endy = event.changedTouches[0].pageY;
+
+	var deltax = endx -startx;
+	var deltay = endy -starty;
+
+	if(Math.abs(deltax) >= Math.abs(deltay)){
+		if(deltax > 0){
+			//move right
+			if(moveRight()){
+				setTimeout("generateOneNumber()",210);
+				setTimeout("isGameOver()",300);
+			}
+		}else{
+			//move left
+			if(moveLeft()){
+				setTimeout("generateOneNumber()",210);
+				setTimeout("isGameOver()",300);
+			}
+		}
+	}else{
+		if(deltay > 0){
+			//move down
+			if(moveDown()){
+				setTimeout("generateOneNumber()",210);
+				setTimeout("isGameOver()",300);
+			}
+		}else{
+			//move up
+			if(moveUp()){
+				setTimeout("generateOneNumber()",210);
+				setTimeout("isGameOver()",300);
+			}
+		}
+	}
+});
 
 function isGameOver(){
 	if(nospace(board) && nomove(board)){
