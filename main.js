@@ -83,14 +83,26 @@ function generateOneNumber(){
 	//随机一个位置
 	var randx = parseInt(Math.floor(Math.random()*4));
 	var randy = parseInt(Math.floor(Math.random()*4));
-	while(true){
+	var times = 0;
+	while(times<50){
 		if(board[randx][randy] == 0){
 			break;
 		}
 		var randx = parseInt(Math.floor(Math.random()*4));
 		var randy = parseInt(Math.floor(Math.random()*4));
-
+		times++;
 	}
+	if(times ==50){
+		for (var i = 0; i < 4; i++) {
+			for (var i = 0; i < 4; i++) {
+				if(board[i][j] == 0){
+					randx = i;
+					randy = j;
+				}
+			};
+		};
+	}
+
 	//随机一个数字
 	var randNumber = Math.random()<0.5?2:4;
 	//随机位置显示随机数字
